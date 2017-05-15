@@ -23,9 +23,6 @@
 
 #if defined(__APPLE__)
 
-#import <Symbolication/Symbolication.h>
-#import <Symbolication/SymbolicationPrivate.h>
-
 // This must be done *after* any references to Foundation.h!
 #define uint_t  __Solaris_uint_t
 

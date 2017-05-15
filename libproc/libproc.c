@@ -24,7 +24,8 @@
 #include <CoreSymbolication/CoreSymbolication.h>
 #include <CoreSymbolication/CoreSymbolicationPrivate.h>
 
-#import <mach/mach.h>
+#include <mach/mach.h>
+#include <mach/mach_vm.h>
 #include <mach/mach_error.h>
 #include <servers/bootstrap.h>
 #include <unistd.h>
@@ -46,6 +47,9 @@
 #import <pthread.h>
 
 #include <crt_externs.h>
+
+// We cannot import dt_impl.h, so define this here.
+extern void dt_dprintf(const char *, ...);
 
 extern int _dtrace_mangled;
 
@@ -431,17 +435,17 @@ int Punsetflags(struct ps_prochandle *P, long flags) {
 }
 
 int pr_open(struct ps_prochandle *P, const char *foo, int bar, mode_t baz) {
-	NSLog(@"libProc.a UNIMPLEMENTED: pr_open()");
+	printf("libProc.a UNIMPLEMENTED: pr_open()");
 	return 0;
 }
 
 int pr_close(struct ps_prochandle *P, int foo) {
-	NSLog(@"libProc.a UNIMPLEMENTED: pr_close");
+	printf("libProc.a UNIMPLEMENTED: pr_close");
 	return 0;
 }
 
 int pr_ioctl(struct ps_prochandle *P, int foo, int bar, void *baz, size_t blah) {
-	NSLog(@"libProc.a UNIMPLEMENTED: pr_ioctl");
+	printf("libProc.a UNIMPLEMENTED: pr_ioctl");
 	return 0;
 }
 
@@ -490,7 +494,6 @@ int Pxlookup_by_name(
 	if (!CSIsNull(symbol)) {
 		if (CSSymbolIsDyldStub(symbol)) symbol = kCSNull;
 		if (!CSSymbolIsFunction(symbol)) symbol = kCSNull;
-		if (CSSymbolOwnerIsCommpage(CSSymbolGetSymbolOwner(symbol))) symbol = kCSNull; // <rdar://problem/4877551>
 	}
 	
 	if (!CSIsNull(symbol)) {
@@ -656,7 +659,6 @@ int Pobject_iter(struct ps_prochandle *P, proc_map_f *func, void *cd) {
 				CSSymbolOwnerSetTransientUserData(owner, P->current_symbol_owner_generation);
 						
 			if (err) return; // skip everything after error
-			if (CSSymbolOwnerIsCommpage(owner)) return; // <rdar://problem/4877551>
 			
 			prmap_t map;
 			const char* name = CSSymbolOwnerGetName(owner);
@@ -678,7 +680,7 @@ const prmap_t *Paddr_to_map(struct ps_prochandle *P, mach_vm_address_t addr, prm
 	CSSymbolOwnerRef owner = CSSymbolicatorGetSymbolOwnerWithAddressAtTime(P->symbolicator, addr, kCSNow);
 	
 	// <rdar://problem/4877551>
-	if (!CSIsNull(owner) && !CSSymbolOwnerIsCommpage(owner)) {	
+	if (!CSIsNull(owner)) {	
 		map->pr_vaddr = CSSymbolOwnerGetBaseAddress(owner);                        
 		map->pr_mflags = MA_READ; // Anything we get from a symbolicator is readable
 		
@@ -727,7 +729,7 @@ const prmap_t *Plmid_to_map(struct ps_prochandle *P, Lmid_t ignored, const char 
 	// CSSymbolOwnerRef owner = CSSymbolicatorGetSymbolOwnerWithNameAtTime(P->symbolicator, cname, kCSNow);
 	
 	// <rdar://problem/4877551>
-	if (!CSIsNull(owner) && !CSSymbolOwnerIsCommpage(owner)) {	    
+	if (!CSIsNull(owner)) {	    
 		map->pr_vaddr = CSSymbolOwnerGetBaseAddress(owner);
 		map->pr_mflags = MA_READ; // Anything we get from a symbolicator is readable
 		
@@ -863,7 +865,7 @@ int Psymbol_iter_by_addr(struct ps_prochandle *P, const char *object_name, int w
 	CSSymbolOwnerRef owner = symbolOwnerForName(P->symbolicator, object_name);
 			
 	// <rdar://problem/4877551>
-	if (!CSIsNull(owner) && !CSSymbolOwnerIsCommpage(owner)) {
+	if (!CSIsNull(owner)) {
 		// We work through "generations of symbol owners. At any given point, we only want to
 		// look at what has changed since the last processing attempt. Dyld may load library after
 		// library with the same load timestamp. So we mark the symbol owners with a "generation"
@@ -962,7 +964,7 @@ const char *Ppltdest(struct ps_prochandle *P, mach_vm_address_t addr) {
 	CSSymbolRef symbol = CSSymbolicatorGetSymbolWithAddressAtTime(P->symbolicator, addr, kCSNow);
 	
 	// Do not allow dyld stubs, !functions, or commpage entries (<rdar://problem/4877551>)
-	if (!CSIsNull(symbol) && (CSSymbolIsDyldStub(symbol) || !CSSymbolIsFunction(symbol) || CSSymbolOwnerIsCommpage(CSSymbolGetSymbolOwner(symbol))))
+	if (!CSIsNull(symbol) && (CSSymbolIsDyldStub(symbol) || !CSSymbolIsFunction(symbol)))
 		err = "Ppltdest is not implemented";
 	
 	return err;
@@ -1048,7 +1050,7 @@ void* Pdequeue_proc_activity(struct ps_prochandle* P)
 		pthread_cond_wait(&P->proc_activity_queue_cond, &P->proc_activity_queue_mutex);
 
 	// Did we get anything?
-	if (ret = P->proc_activity_queue) {
+	if ((ret = P->proc_activity_queue)) {
 		P->proc_activity_queue = ret->next;
 		P->rd_event = ret->rd_event;		
 	}
