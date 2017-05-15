@@ -19,21 +19,14 @@
  * CDDL HEADER END
  */
 
-/*
- * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
- * Use is subject to license terms.
- */
-
-#pragma ident	"@(#)err.D_PROTO_LEN.toomany.d	1.1	06/08/28 SMI"
-
-/*
- * ASSERTION:
- *  Test tracemem() with too many arguments.
- *
- * SECTION: Actions and Subroutines/tracemem()
- */
+#pragma D option quiet
+#pragma D option strsize=32
 
 BEGIN
 {
-	tracemem(123, 456, 789);
+	printf("%s\n", toupper("abcdefghijklmnopqrstuvwxyz"));
+	printf("%s\n", toupper("0123456789!"));
+	printf("%s\n", toupper("/stairway/to/heaven"));
+	printf("%s\n", toupper("aaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
+	exit(0);
 }
