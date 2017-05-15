@@ -20,21 +20,19 @@
  */
 
 /*
- * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2015 Apple Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)err.D_PROC_ALIGN.misaligned.d	1.1	06/08/28 SMI"
 
 /*
- * ASSERTION: On SPARC, you can't trace misaligned offsets
- *
- * SECTION: User Process Tracing/pid Provider
- *
- * NOTES:
- *
+ * ASSERTION:
+ *	Check that a buflimit higher than 100 is always refused.
  */
+#pragma D option bufpolicy=switch
+#pragma D option buflimit=101
 
-pid$1:a.out:main:7
+BEGIN
 {
+	exit(0);
 }

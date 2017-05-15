@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # CDDL HEADER START
 #
@@ -23,29 +24,6 @@
 # Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-#ident	"@(#)Makefile	1.1	06/08/28 SMI"
+#ident	"@(#)err.D_PROC_NAME.badname.exe	1.1	06/08/28 SMI"
 
-include ../Makefile.com
-
-ASFLAGS += -D_ASM -K PIC -P
-
-clobber := DSRC += ustack/tst.helper_helper.d ustack/tst.annotated_helper.d
-
-all:	ustack/tst.helper.exe ustack/tst.annotated.exe
-
-ustack/tst.helper.exe: ustack/tst.helper.o ustack/tst.helper_helper.o
-	$(CC) -o ustack/tst.helper.exe \
-		 ustack/tst.helper.o ustack/tst.helper_helper.o
-	$(STRIP) ustack/tst.helper.exe
-
-ustack/tst.helper_helper.o: ustack/tst.helper_helper.d
-	/usr/sbin/dtrace -G -o ustack/tst.helper_helper.o \
-		-s ustack/tst.helper_helper.d
-
-ustack/tst.annotated.exe: ustack/tst.annotated.o ustack/tst.annotated_helper.o
-	$(CC) -o ustack/tst.annotated.exe \
-		 ustack/tst.annotated.o ustack/tst.annotated_helper.o
-
-ustack/tst.annotated_helper.o: ustack/tst.annotated_helper.d
-	/usr/sbin/dtrace -G -o ustack/tst.annotated_helper.o \
-		-s ustack/tst.annotated_helper.d
+sleep 1000000

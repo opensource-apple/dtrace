@@ -24,9 +24,15 @@
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tst.helper_helper.d	1.1	06/08/28 SMI"
+#pragma ident	"@(#)err.D_PROC_NAME.badname.d	1.1	06/08/28 SMI"
 
-dtrace:helper:ustack:
+/*
+ * ASSERTION: Only entry, return and offsets are valid names
+ *
+ * SECTION: User Process Tracing/pid Provider
+ *
+ */
+
+pid$1::strlen:beginning
 {
-	"<it's working>"
 }

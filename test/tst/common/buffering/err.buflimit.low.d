@@ -20,41 +20,19 @@
  */
 
 /*
- * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2015 Apple Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tst.branch.s	1.1	06/08/28 SMI"
 
-#include <sys/asm_linkage.h>
+/*
+ * ASSERTION:
+ *	Check that a buflimit lower than 1 is always refused.
+ */
+#pragma D option bufpolicy=switch
+#pragma D option buflimit=0
 
-	ENTRY(waiting)
-	retl
-	ldub	[%o0], %o0
-	SET_SIZE(waiting)
-
-	ENTRY(main)
-	save	%sp, -SA(MINFRAME + 4), %sp
-	stb	%g0, [%fp - 4]
-1:
-	call	waiting
-	sub	%fp, 4, %o0
-	tst	%o0
-	bz	1b
-	nop
-
-	restore
-
-	tst	%g0
-	be	other
-	nop
-
-	ALTENTRY(bad)
-	illtrap
-	SET_SIZE(bad)
-	SET_SIZE(main)
-
-	ENTRY(other)
-	retl
-	clr	%o0
-	SET_SIZE(other)
+BEGIN
+{
+	exit(0);
+}

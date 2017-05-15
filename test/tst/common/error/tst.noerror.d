@@ -20,24 +20,29 @@
  */
 
 /*
- * Copyright 2006 Sun Microsystems, Inc.  All rights reserved.
+ * Copyright 2016 Apple, Inc.  All rights reserved.
  * Use is subject to license terms.
  */
 
-#pragma ident	"@(#)tst.annotated.c	1.1	06/08/28 SMI"
+/*
+ * ASSERTION:
+ *	Make sure the errors are ignored when noerror is set
+ *
+ * SECTION: dtrace Provider
+ *
+ */
 
-int
-baz(void)
+
+#pragma D option quiet
+#pragma D option noerror
+
+BEGIN
 {
-	return (8);
+	*(char *)NULL;
 }
 
-int
-main(int argc, char **argv)
+BEGIN
 {
-	for (;;) {
-		baz();
-	}
-
-	return (0);
+	printf("BEGIN fired");
+	exit(0);
 }

@@ -33,6 +33,6 @@
  *
  */
 
-pid$1::exit:beginning
+pid$1::strlen:beginning
 {
 }
