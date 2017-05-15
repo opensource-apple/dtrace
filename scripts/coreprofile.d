@@ -19,22 +19,22 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+
+inline uint64_t COREPROFILE_RESUME_TRIGGER = 0x1ULL;
+#pragma D binding "1.6.2" COREPROFILE_RESUME_TRIGGER
  
-inline uint64_t CHUD_START_SHARK = 0x1ULL;
-#pragma D binding "1.0" CHUD_START_SHARK
+inline uint64_t COREPROFILE_PAUSE_TRIGGER = 0x2ULL;
+#pragma D binding "1.6.2" COREPROFILE_PAUSE_TRIGGER
 
-inline uint64_t CHUD_STOP_SHARK = 0x2ULL;
-#pragma D binding "1.0" CHUD_STOP_SHARK
+inline uint64_t COREPROFILE_FIRE_TRIGGER = 0x3ULL;
+#pragma D binding "1.6.2" COREPROFILE_FIRE_TRIGGER
 
-inline uint64_t CHUD_RECORD_SAMPLE = 0x3ULL;
-#pragma D binding "1.0" CHUD_RECORD_SAMPLE
+inline uint64_t COREPROFILE_SIGNPOST_POINT = 0x4ULL;
+#pragma D binding "1.6.2" COREPROFILE_SIGNPOST_POINT
 
-inline uint64_t CHUD_SIGNPOST_POINT = 0x4ULL;
-#pragma D binding "1.0" CHUD_SIGNPOST_POINT
+inline uint64_t COREPROFILE_SIGNPOST_START	= 0x5ULL;
+#pragma D binding "1.6.2" COREPROFILE_SIGNPOST_START
 
-inline uint64_t CHUD_SIGNPOST_START	= 0x5ULL;
-#pragma D binding "1.0" CHUD_SIGNPOST_START
-
-inline uint64_t CHUD_SIGNPOST_END	= 0x6ULL;
-#pragma D binding "1.0" CHUD_SIGNPOST_END
+inline uint64_t COREPROFILE_SIGNPOST_END	= 0x6ULL;
+#pragma D binding "1.6.2" COREPROFILE_SIGNPOST_END
 
